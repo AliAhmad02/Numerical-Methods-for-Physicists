@@ -39,7 +39,6 @@ repos:
     rev: 4.0.0
     hooks:
     -   id: pydocstyle
-        args: [--ignore==D107,D204]
 -   repo: https://github.com/PyCQA/autoflake
     rev: v2.2.0
     hooks:
