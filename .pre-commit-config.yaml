@@ -47,3 +47,7 @@ repos:
     rev: 4.0.0
     hooks:
     -   id: pydocstyle
+-   repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.0
+    hooks:
+    -   id: autoflake
