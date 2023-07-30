@@ -7,7 +7,7 @@ from numpy.typing import ArrayLike
 from scipy.special import lambertw
 
 
-def f(z: ArrayLike, x: float) -> float:
+def f(z: ArrayLike, x: float) -> ArrayLike:
     """Get function values for f.
 
     Where f is the function whose roots give the lambert W function.
@@ -15,7 +15,7 @@ def f(z: ArrayLike, x: float) -> float:
     return x * np.exp(x) - z
 
 
-def central_diff(z: ArrayLike, x: float, dx: float) -> float:
+def central_diff(z: ArrayLike, x: float, dx: float) -> ArrayLike:
     """Central derivative of f."""
     return (f(z, x + dx) - f(z, x - dx)) / 2 * dx
 
