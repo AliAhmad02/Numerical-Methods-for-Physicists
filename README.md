@@ -1,2 +1,2 @@
 # Numerical-Methods-for-Physicists
-Repo for the course Numerical Methods for Physicsts at the University of Copenhagen
+Repo for the course Numerical Methods for Physicists at the University of Copenhagen
