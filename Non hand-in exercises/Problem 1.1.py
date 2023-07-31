@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 from scipy.special import lambertw
 
 
-def f(z: ArrayLike, x: float) -> ArrayLike:
+def f(z: NDArray[np.float64], x: float) -> NDArray[np.float64]:
     """Get function values for f.
 
     Where f is the function whose roots give the lambert W function.
@@ -15,13 +15,17 @@ def f(z: ArrayLike, x: float) -> ArrayLike:
     return x * np.exp(x) - z
 
 
-def central_diff(z: ArrayLike, x: float, dx: float) -> ArrayLike:
+def central_diff(
+    z: NDArray[np.float64],
+    x: float,
+    dx: float,
+) -> NDArray[np.float64]:
     """Central derivative of f."""
     return (f(z, x + dx) - f(z, x - dx)) / 2 * dx
 
 
 def my_lambertw(
-    z: ArrayLike,
+    z: NDArray[np.float64],
     x_0: float,
     dx: float,
     max_iterations: int,
@@ -42,18 +46,18 @@ def my_lambertw(
     return x
 
 
-z: ArrayLike = np.arange(0, 150, 1)
+z: NDArray[np.float64] = np.arange(0, 150, 1)
 x_0: float = 0.0
 dx: float = 1
 
-lambert_100_kwargs: dict[str, float | int | ArrayLike] = {
+lambert_100_kwargs: dict[str, float | int | NDArray[np.float64]] = {
     "z": z,
     "x_0": x_0,
     "dx": dx,
     "max_iterations": 100,
 }
 
-lambert_nomax_kwargs: dict[str, float | int | ArrayLike] = {
+lambert_nomax_kwargs: dict[str, float | int | NDArray[np.float64]] = {
     "z": z,
     "x_0": x_0,
     "dx": dx,

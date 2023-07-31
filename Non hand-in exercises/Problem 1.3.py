@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 
 
 def upper_lower_diagonal(
@@ -10,14 +10,14 @@ def upper_lower_diagonal(
     upper_val: float,
     main_val: float,
     lower_val: float,
-) -> ArrayLike:
+) -> NDArray[np.float64]:
     """Return matrix with specificed values on given diagonals."""
-    upper_vals: ArrayLike = np.ones(N - 1) * upper_val
-    main_vals: ArrayLike = np.ones(N) * main_val
-    lower_vals: ArrayLike = np.ones(N - 1) * lower_val
-    diag_mat: ArrayLike = np.diag(main_vals, k=0)
-    upper_diag_mat: ArrayLike = np.diag(upper_vals, k=1)
-    lower_diag_mat: ArrayLike = np.diag(lower_vals, k=-1)
+    upper_vals: NDArray[np.float64] = np.ones(N - 1) * upper_val
+    main_vals: NDArray[np.float64] = np.ones(N) * main_val
+    lower_vals: NDArray[np.float64] = np.ones(N - 1) * lower_val
+    diag_mat: NDArray[np.float64] = np.diag(main_vals, k=0)
+    upper_diag_mat: NDArray[np.float64] = np.diag(upper_vals, k=1)
+    lower_diag_mat: NDArray[np.float64] = np.diag(lower_vals, k=-1)
     return diag_mat + lower_diag_mat + upper_diag_mat
 
 

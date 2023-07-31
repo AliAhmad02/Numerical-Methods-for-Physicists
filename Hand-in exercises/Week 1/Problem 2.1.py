@@ -67,7 +67,7 @@ plt.legend()
 plt.show()
 print(f"\n Maximum absolute errors: \n {max_abs_err}")
 
-Nlog: NDArray[np.float64] = np.logspace(1, 6, 50, dtype=int)
+Nlog: NDArray[np.int64] = np.logspace(1, 6, 50, dtype=int)
 max_abs_err_N: list[float] = []
 
 for index, array in enumerate(coeff_mat):
