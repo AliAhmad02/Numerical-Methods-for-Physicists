@@ -21,7 +21,7 @@ def central_diff(
     dx: float,
 ) -> NDArray[np.float64]:
     """Central derivative of f."""
-    return (f(z, x + dx) - f(z, x - dx)) / 2 * dx
+    return (f(z, x + dx) - f(z, x - dx)) / (2 * dx)
 
 
 def my_lambertw(
