@@ -41,10 +41,12 @@ def piecewise_deriv_robust(x: NDArray[np.float64], a: float, dx: float):
     """
     cond_list: list[NDArray[np.bool_]] = [x < 0, x > 0]
     c1, c2 = cond_list
-    forward: NDArray[np.float64] = (piecewise(x + dx, a) - 
-                                    piecewise(x, a))[c2] / dx
-    backward: NDArray[np.float64] = (piecewise(x, a) - 
-                                     piecewise(x - dx, a))[c1] / dx
+    forward: NDArray[np.float64] = (
+        piecewise(x + dx, a) - piecewise(x, a)
+        )[c2] / dx
+    backward: NDArray[np.float64] = (
+        piecewise(x, a) - piecewise(x - dx, a)
+        )[c1] / dx
     func_list: NDArray[np.float64] = [backward, forward]
     return np.piecewise(x, cond_list, func_list)
 
