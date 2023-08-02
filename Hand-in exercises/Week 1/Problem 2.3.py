@@ -34,10 +34,25 @@ def central_deriv(
     return (piecewise(x + dx, a) - piecewise(x - dx, a)) / (2 * dx)
 
 
+def piecewise_deriv_robust(x: NDArray[np.float64], a: float, dx: float):
+    """Numerical derivative of f that is robust around x=0.
+
+    Ensures that point from x<0 are never used together with points x>0.
+    """
+    cond_list: list[NDArray[np.bool_]] = [x < 0, x > 0]
+    c1, c2 = cond_list
+    forward: NDArray[np.float64] = (piecewise(x + dx, a) - 
+                                    piecewise(x, a))[c2] / dx
+    backward: NDArray[np.float64] = (piecewise(x, a) - 
+                                     piecewise(x - dx, a))[c1] / dx
+    func_list: NDArray[np.float64] = [backward, forward]
+    return np.piecewise(x, cond_list, func_list)
+
+
 N = 1000
 a_vals: NDArray[np.int64] = np.array([0, 1, 2])
-x: NDArray[np.float64] = np.linspace(-1, 1, N, endpoint=False)
-dx: float = 2 / N
+x: NDArray[np.float64] = np.linspace(-1, 1, N)
+dx: float = x[1] - x[0]
 
 fig, (ax1, ax2) = plt.subplots(
     1,
@@ -56,16 +71,39 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-plt.figure(figsize=(6, 4))
+fig, (ax1, ax2) = plt.subplots(
+    1,
+    2,
+    sharex=True,
+    figsize=(12, 4),
+)
+
 for a in a_vals:
-    plt.plot(
+    ax1.plot(
         x,
         np.abs(
             central_deriv(x, a, dx) - piecewise_deriv(x, a),
         ),
         label=f"a={a}",
     )
-plt.xlabel(r"$x$", fontsize=20)
-plt.ylabel(r"$|f \ ^{\prime}_{central}-f \ ^{\prime}_{exact}|$", fontsize=15)
+
+    ax2.plot(
+        x,
+        np.abs(
+            piecewise_deriv_robust(x, a, dx) - piecewise_deriv(x, a),
+        ),
+        label=f"a={a}",
+    )
+
+fig.supxlabel(r"$x$", fontsize=20)
+ax1.set_ylabel(
+    r"$|f \ ^{\prime}_{central}-f \ ^{\prime}_{exact}|$",
+    fontsize=15,
+)
+ax2.set_ylabel(
+    r"$|f \ ^{\prime}_{robust}-f \ ^{\prime}_{exact}|$",
+    fontsize=15,
+)
 plt.legend()
+plt.tight_layout()
 plt.show()
