@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from problem_3_1 import explicit_euler
 
 
-def diff(f: float, t):
+def diff(f: float, t: float):
     """Return derivative of f."""
     return 1 + np.sin(t) * f
 
