@@ -28,7 +28,7 @@ def explicit_euler(
     t_stop: float,
     dt: float,
     deriv: Callable,
-    *args: tuple,
+    *args: tuple | None,
 ) -> tuple[NDArray[np.int64], NDArray[np.int64]]:
     """Solve diff. eq using the explicit euler method."""
     N: int = int((t_stop - t_start) / dt + 1)
@@ -36,7 +36,10 @@ def explicit_euler(
     x_0: float = 0
     x: list[float] = [x_0]
     for t in t_vals[:-1]:
-        x.append(x_0 + deriv(x_0, t, *args) * dt)
+        if args:
+            x.append(x_0 + deriv(x_0, t, *args) * dt)
+        else:
+            x.append(x_0 + deriv(x_0, t) * dt)
         x_0 = x[-1]
     return t_vals, np.array(x)
 
@@ -88,19 +91,20 @@ def plotting(
     plt.show()
 
 
-t_start: int = 0
-t_stop: int = 100
-dt: float = 0.01
-alpha: float = 0.1
-alpha1: int = 200.1
+if __name__ == "__main__":
+    t_start: int = 0
+    t_stop: int = 100
+    dt: float = 0.01
+    alpha: float = 0.1
+    alpha1: int = 200.1
 
-t, x_euler_ex = explicit_euler(t_start, t_stop, dt, dxdt, alpha)
-_, x_euler_imp = implicit_euler(t_start, t_stop, dt, alpha)
-x_exact = x_analytic(t, alpha)
+    t, x_euler_ex = explicit_euler(t_start, t_stop, dt, dxdt, alpha)
+    _, x_euler_imp = implicit_euler(t_start, t_stop, dt, alpha)
+    x_exact = x_analytic(t, alpha)
 
-_, x_euler_ex1 = explicit_euler(t_start, t_stop, dt, dxdt, alpha1)
-_, x_euler_imp1 = implicit_euler(t_start, t_stop, dt, alpha1)
-x_exact1 = x_analytic(t, alpha1)
+    _, x_euler_ex1 = explicit_euler(t_start, t_stop, dt, dxdt, alpha1)
+    _, x_euler_imp1 = implicit_euler(t_start, t_stop, dt, alpha1)
+    x_exact1 = x_analytic(t, alpha1)
 
-plotting(t, x_exact, x_euler_ex, x_euler_imp, True, True)
-plotting(t, x_exact1, x_euler_ex1, x_euler_imp1, True, False)
+    plotting(t, x_exact, x_euler_ex, x_euler_imp, True, True)
+    plotting(t, x_exact1, x_euler_ex1, x_euler_imp1, True, False)
