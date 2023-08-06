@@ -1,4 +1,4 @@
-"""Problem 2.1."""
+"""Problem 2.3."""
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
@@ -41,12 +41,8 @@ def piecewise_deriv_robust(x: NDArray[np.float64], a: float, dx: float):
     """
     cond_list: list[NDArray[np.bool_]] = [x < 0, x > 0]
     c1, c2 = cond_list
-    forward: NDArray[np.float64] = (
-        piecewise(x + dx, a) - piecewise(x, a)
-        )[c2] / dx
-    backward: NDArray[np.float64] = (
-        piecewise(x, a) - piecewise(x - dx, a)
-        )[c1] / dx
+    forward: NDArray[np.float64] = (piecewise(x + dx, a) - piecewise(x, a))[c2] / dx
+    backward: NDArray[np.float64] = (piecewise(x, a) - piecewise(x - dx, a))[c1] / dx
     func_list: NDArray[np.float64] = [backward, forward]
     return np.piecewise(x, cond_list, func_list)
 
@@ -81,12 +77,18 @@ fig, (ax1, ax2) = plt.subplots(
 )
 
 for a in a_vals:
+    if a == 1:
+        zorder: int = 3
+    else:
+        zorder: int = 1
     ax1.plot(
         x,
         np.abs(
             central_deriv(x, a, dx) - piecewise_deriv(x, a),
         ),
         label=f"a={a}",
+        zorder=zorder,
+        lw=3,
     )
 
     ax2.plot(
@@ -95,6 +97,8 @@ for a in a_vals:
             piecewise_deriv_robust(x, a, dx) - piecewise_deriv(x, a),
         ),
         label=f"a={a}",
+        zorder=zorder,
+        lw=3,
     )
 
 fig.supxlabel(r"$x$", fontsize=20)
