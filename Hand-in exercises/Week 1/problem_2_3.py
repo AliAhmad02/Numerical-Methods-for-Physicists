@@ -1,4 +1,4 @@
-"""Problem 2.1."""
+"""Problem 2.3."""
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
@@ -81,12 +81,18 @@ fig, (ax1, ax2) = plt.subplots(
 )
 
 for a in a_vals:
+    if a == 1:
+        zorder: int = 3
+    else:
+        zorder: int = 1
     ax1.plot(
         x,
         np.abs(
             central_deriv(x, a, dx) - piecewise_deriv(x, a),
         ),
         label=f"a={a}",
+        zorder=zorder,
+        lw=3,
     )
 
     ax2.plot(
@@ -95,6 +101,8 @@ for a in a_vals:
             piecewise_deriv_robust(x, a, dx) - piecewise_deriv(x, a),
         ),
         label=f"a={a}",
+        zorder=zorder,
+        lw=3,
     )
 
 fig.supxlabel(r"$x$", fontsize=20)
