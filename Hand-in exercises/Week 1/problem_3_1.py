@@ -96,7 +96,7 @@ if __name__ == "__main__":
     t_stop: int = 100
     dt: float = 0.01
     alpha: float = 0.1
-    alpha1: int = 200.1
+    alpha1: float = 200.1
 
     t, x_euler_ex = explicit_euler(t_start, t_stop, dt, dxdt, alpha)
     _, x_euler_imp = implicit_euler(t_start, t_stop, dt, alpha)
