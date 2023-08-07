@@ -21,13 +21,14 @@ def upper_lower_diagonal(
     return diag_mat + lower_diag_mat + upper_diag_mat
 
 
-A = upper_lower_diagonal(10, 0.5, 0, -0.5)
-print(f"\n a) \n {A}")
+if __name__ == "__main__":
+    A = upper_lower_diagonal(10, 0.5, 0, -0.5)
+    print(f"\n a) \n {A}")
 
-B = upper_lower_diagonal(10, 1, -2, 1)
-print(f"\n b) \n {B}")
+    B = upper_lower_diagonal(10, 1, -2, 1)
+    print(f"\n b) \n {B}")
 
-B[0] = np.append([1], np.zeros(9))
-B[-1] = np.append(np.zeros(9), [1])
+    B[0] = np.append([1], np.zeros(9))
+    B[-1] = np.append(np.zeros(9), [1])
 
-print(f"\n c) \n {B}")
+    print(f"\n c) \n {B}")
