@@ -32,3 +32,35 @@ if __name__ == "__main__":
     B[-1] = np.append(np.zeros(9), [1])
 
     print(f"\n c) \n {B}")
+
+    N: int = 5
+    x: NDArray[np.float64] = np.zeros(N**2)
+    y: NDArray[np.float64] = np.zeros(N**2)
+    for i in range(N):
+        for j in range(N):
+            k = N * i + j
+            x[k] = j
+            y[k] = i
+    print(f"\n d) x: \n {x} \n y: \n {y}")
+
+    N1: int = 4
+    L: NDArray[np.float64] = np.zeros((N1**2, N1**2))
+    for k in range(N1**2):
+        for l in range(N1**2):  # noqa: E741
+            if k == l:
+                L[k, l] = -4
+            elif np.abs(x[k] - x[l]) == 1 and y[k] == y[l]:
+                L[k, l] = 1
+            elif np.abs(y[k] - y[l]) == 1 and x[k] == x[l]:
+                L[k, l] = 1
+    print(f"\n e) \n L: \n {L}")
+
+    n: int = 4
+    D1: NDArray[np.float64] = 0.5 * np.eye(n, n, 1) - 0.5 * np.eye(n, n, -1)
+    D2: NDArray[np.float64] = np.eye(n, k=1) + np.eye(n, k=-1) - 2 * np.eye(n)
+    xx, yy = np.meshgrid(np.arange(n), np.arange(n))
+    x = xx.flatten()
+    y = yy.flatten()
+
+    L1: NDArray[np.float64] = np.kron(D2, np.eye(n)) + np.kron(np.eye(n), D2)
+    print(f"\n h) \n L: \n {L1}")
