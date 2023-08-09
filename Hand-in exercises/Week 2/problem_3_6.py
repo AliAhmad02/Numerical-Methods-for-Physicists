@@ -44,8 +44,14 @@ def solve_advection(
     return x, sol
 
 
-x, sol1 = solve_advection(0, 25, 1000, 2)
-plt.plot(x, sol1)
-plt.xlabel("x", fontsize=15)
-plt.ylabel("f(x)", fontsize=15)
+start: int = 0
+end: int = 25
+N: int = 1000
+D_arr: NDArray[np.float64] = np.array([0.5, 2, 15])
+for D in D_arr:
+    plt.plot(*solve_advection(start, end, N, D), label=f"D={D}")
+    plt.xlabel("x", fontsize=15)
+    plt.ylabel("f(x)", fontsize=15)
+plt.legend()
+plt.tight_layout()
 plt.show()
