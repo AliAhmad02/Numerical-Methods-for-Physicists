@@ -54,8 +54,6 @@ def gillespie(
     while t[-1] < t_end:
         R: NDArray[np.float64] = np.array([k1 * N_CO2[-1], k2 * N_H2CO3[-1]])
         R_total: float = np.sum(R)
-        if R_total == 0:
-            break
         deltat: int = np.random.exponential(scale=1 / R_total)
         t.append(t[-1] + deltat)
         U: float = np.random.uniform(0, R_total)
