@@ -58,11 +58,12 @@ def gillespie(
             break
         deltat: int = np.random.exponential(scale=1 / R_total)
         t.append(t[-1] + deltat)
-        U: float = np.random.uniform(0, 1)
-        if U * R_total <= R[0]:
+        U: float = np.random.uniform(0, R_total)
+        event_idx: int = np.argmax(np.cumsum(R) >= U)
+        if event_idx == 0:
             N_CO2.append(N_CO2[-1] - 1)
             N_H2CO3.append(N_H2CO3[-1] + 1)
-        elif U * R_total > R[0]:
+        elif event_idx == 1:
             N_CO2.append(N_CO2[-1] + 1)
             N_H2CO3.append(N_H2CO3[-1] - 1)
     return t, np.array(N_H2CO3) / N
