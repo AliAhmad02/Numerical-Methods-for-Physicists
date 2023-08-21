@@ -41,10 +41,7 @@ def accept_reject_spin(
     energy_change = deltaE(S1, S2)
     alpha = min(1, np.exp(-energy_change / T))
     U = np.random.uniform(0, 1)
-    if U <= alpha:
-        S = S2
-    else:
-        S = S1
+    S = (U <= alpha) * S2 + (U > alpha) * S1
     return S
 
 
@@ -56,21 +53,22 @@ def metropolis_hastings(
     """Initialize random S and perform 1000 N² Metropolis Hastings steps."""
     iterations: int = 1000 * N**2
     iterations_save: list = []
-    bruh = [
-        1,
+    save_iter = [
+        0,
+        int((1 / 1000) * iterations),
+        int((1 / 500) * iterations),
         int((1 / 100) * iterations),
         int((1 / 50) * iterations),
         int((1 / 20) * iterations),
-        int((1 / 5) * iterations),
         int(iterations),
     ]
-    S_save = []
+    S_save: list[NDArray[np.int64]] = []
     for i in tqdm(range(iterations)):
         S2: NDArray[np.float64] = S1.copy()
         x_idx, y_idx = np.random.randint(0, N, size=2)
         S2[x_idx, y_idx] *= -1
         S1 = accept_reject_spin(S1, S2, T)
-        if i in bruh:
+        if i in save_iter:
             S_save.append(S1.copy())
             iterations_save.append(i)
     return np.array(S_save), np.array(iterations_save)
