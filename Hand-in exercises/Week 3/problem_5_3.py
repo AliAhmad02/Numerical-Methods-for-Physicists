@@ -90,7 +90,6 @@ def gillespie_DUR(
             U.append(U[-1] - 1)
             R.append(R[-1] + 1)
             D.append(D[-1])
-    print(np.sum((np.array(R) + np.array(D) + np.array(U)) != 50))
     return np.array(t), np.array(R), np.array(D)
 
 
