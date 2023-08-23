@@ -1,12 +1,9 @@
 """Final project: Fourier optics."""
 from __future__ import annotations
 
-from time import time
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
-from matplotlib.figure import Figure
 from numpy.lib.index_tricks import IndexExpression
 from numpy.typing import NDArray
 from PIL import Image
@@ -15,7 +12,6 @@ from PIL import ImageFont
 from scipy.fft import fft2
 from scipy.fft import fftfreq
 from scipy.fft import ifft2
-from tqdm import tqdm
 
 
 def gaussian(x, mu=0, sig=2):
@@ -110,7 +106,8 @@ def calculate_and_plotE(
     xs, ys = np.meshgrid(x, y)
     E: NDArray[np.float64] = get_Efield(x, y, A0, dist, wavelength)
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-    ax1.pcolormesh(xs, ys, E, cmap="hot")
+    ax1.axis("off")
+    ax1.imshow(E, cmap="hot")
     if slice_x:
         ax2.plot(xs[slice_x], E[slice_x] ** 2)
     elif slice_y:
@@ -124,10 +121,9 @@ def animate_with_distance(
     A0: NDArray[np.float64],
     distances: NDArray[np.float64],
     wavelength: float,
-    fig: Figure,
 ) -> None:
     """Calculate and animate diffraction pattern with distance."""
-    xs, ys = np.meshgrid(x, y)
+    fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot()
 
     def animate(i):
@@ -136,17 +132,13 @@ def animate_with_distance(
         ax.imshow(E, cmap="hot")
         ax.set_title(f"Distance={distances[i]:.2f}")
 
-    start = time()
     ani = FuncAnimation(
         fig,
         animate,
-        frames=tqdm(
-            range(len(distances)),
-        ),
+        frames=len(distances),
         interval=20,
     )
-    ani.save("basic_animation.GIF", fps=30, writer="pillow", dpi=300)
-    print("Execution time:", time() - start)
+    ani.save("basic_animation.GIF", fps=27, writer="pillow", dpi=300)
 
 
 def do_multiple_animations(
@@ -155,18 +147,38 @@ def do_multiple_animations(
     y: NDArray[np.float64],
     distances: NDArray[np.float64],
     wavelength: float,
+    rows: int,
+    cols: int,
 ) -> None:
     """Perform animations for multiple apertures."""
-    fig, _ = plt.subplots(3, 3, figsize=(18, 18))
-    for A0 in Apertures:
-        animate_with_distance(x, y, A0_rub_har, distances, wavelength, fig)
+    figsize: tuple[int, int] = (rows * 4, cols * 4)
+    n_plots: int = len(Apertures)
+    idx_list: int = list(range(1, n_plots + 1))
+    fig = plt.figure(figsize=figsize)
+    fig.set_tight_layout(True)
+
+    def animate(i):
+        print(i)
+        for j in range(n_plots):
+            ax = fig.add_subplot(rows, cols, idx_list[j])
+            E = get_Efield(x, y, Apertures[j], distances[i], wavelength)
+            ax.imshow(E, cmap="hot")
+            ax.axis("off")
+        fig.suptitle(f"Distance={distances[i]:.2f}", fontsize=35)
+
+    plt.setp(plt.gcf().get_axes(), xticks=[], yticks=[])
+    ani = FuncAnimation(
+        fig,
+        animate,
+        frames=len(distances),
+        interval=20,
+    )
+    ani.save("basic_animation.GIF", fps=30, writer="pillow", dpi=300)
 
 
 # We write everything in units of 10⁻4 meters
-slit_width: int = 1
-slit_height: int = 10
 wavelength: int = 700e-5
-dist: int = 200
+dist: int = 300
 
 start: int = -20
 end: int = 20
@@ -182,13 +194,14 @@ slice_y = np.s_[:, 1000]
 
 slit: str = "┃"
 double_slit: str = "┃┃"
-grating: str = "▓"
+grating: str = "▩"
 doubleO: str = "OO"
 hexagon: str = "⎔"
 amogus: str = "ඞ"
 david: str = "✡"
 rub: str = "۞"
 optics: str = "OPTICS SUCKS"
+handicap: str = "♿"
 gauss_vals: NDArray[np.float64] = gaussian(y)
 
 A0_slit: NDArray[np.float64] = create_word_image(slit, (N, N), scaling=0.4)
@@ -197,6 +210,13 @@ A0_doubleslit: NDArray[np.float64] = create_word_image(
     (N, N),
     scaling=0.2,
 )
+
+A0_grating: NDArray[np.float64] = create_word_image(
+    grating,
+    (N, N),
+    scaling=0.5,
+)
+
 A0_gauss: NDArray[np.float64] = np.array(
     [A0_slit[i] * gauss_vals[i] for i in range(N)],
 )
@@ -231,11 +251,15 @@ A0_rub_nak: NDArray[np.float64] = create_word_image(
 )
 A0_optics: NDArray[np.float64] = create_word_image(optics, (N, N))
 
-distances = np.linspace(1, 1000, 2)
-fig = plt.figure(figsize=(5, 5))
+A0_handicap: NDArray[np.float64] = create_word_image(
+    handicap,
+    (N, N),
+    scaling=0.7,
+)
+
+distances = np.linspace(1, 1000, 3)
 Apertures = [
-    A0_doubleslit,
-    A0_gauss,
+    A0_grating,
     A0_doubleO,
     A0_hexagon,
     A0_amogus,
@@ -243,17 +267,19 @@ Apertures = [
     A0_rub_har,
     A0_rub_nak,
     A0_optics,
+    A0_handicap,
 ]
-# animate_with_distance(x, y, A0_amogus, distances, wavelength, fig)
-# do_multiple_animations(Apertures, x, y, distances, wavelength)
+do_multiple_animations(Apertures, x, y, distances, wavelength, 3, 3)
 
-# calculate_and_plotE(x, y, A0_slit, dist, wavelength, slice_x)
-# calculate_and_plotE(x, y, A0_gauss, dist, wavelength, slice_y=slice_y)
-# calculate_and_plotE(x, y, A0_amogus, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_doubleslit, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_doubleO, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_hexagon, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_david, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_rub_har, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_rub_nak, dist, wavelength, slice_x=slice_x)
-# calculate_and_plotE(x, y, A0_optics, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_slit, dist, wavelength, slice_x)
+calculate_and_plotE(x, y, A0_gauss, dist, wavelength, slice_y=slice_y)
+calculate_and_plotE(x, y, A0_grating, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_amogus, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_doubleslit, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_doubleO, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_hexagon, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_david, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_rub_har, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_rub_nak, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_optics, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_handicap, dist, wavelength, slice_x=slice_x)
