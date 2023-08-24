@@ -155,18 +155,18 @@ def do_multiple_animations(
     n_plots: int = len(Apertures)
     idx_list: int = list(range(1, n_plots + 1))
     fig = plt.figure(figsize=figsize)
-    fig.set_tight_layout(True)
+    # fig.set_tight_layout(True)
 
     def animate(i):
         print(i)
+        fig.suptitle(f"Distance={distances[i]:.2f}", fontsize=30)
         for j in range(n_plots):
             ax = fig.add_subplot(rows, cols, idx_list[j])
             E = get_Efield(x, y, Apertures[j], distances[i], wavelength)
             ax.imshow(E, cmap="hot")
             ax.axis("off")
-        fig.suptitle(f"Distance={distances[i]:.2f}", fontsize=35)
+            plt.tight_layout()
 
-    plt.setp(plt.gcf().get_axes(), xticks=[], yticks=[])
     ani = FuncAnimation(
         fig,
         animate,
@@ -182,7 +182,7 @@ dist: int = 300
 
 start: int = -20
 end: int = 20
-N: int = 1500
+N: int = 1000
 
 x: NDArray[np.float64] = np.linspace(start, end, N)
 y: NDArray[np.float64] = np.linspace(start, end, N)
@@ -257,7 +257,7 @@ A0_handicap: NDArray[np.float64] = create_word_image(
     scaling=0.7,
 )
 
-distances = np.linspace(1, 1000, 3)
+distances: NDArray[np.float64] = np.linspace(1, 1000, 200)
 Apertures = [
     A0_grating,
     A0_doubleO,
@@ -269,8 +269,8 @@ Apertures = [
     A0_optics,
     A0_handicap,
 ]
-do_multiple_animations(Apertures, x, y, distances, wavelength, 3, 3)
 
+do_multiple_animations(Apertures, x, y, distances, wavelength, 3, 3)
 calculate_and_plotE(x, y, A0_slit, dist, wavelength, slice_x)
 calculate_and_plotE(x, y, A0_gauss, dist, wavelength, slice_y=slice_y)
 calculate_and_plotE(x, y, A0_grating, dist, wavelength, slice_x=slice_x)
