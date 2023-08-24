@@ -84,10 +84,6 @@ def create_word_image(
 
     # Draw the white word on the background
     draw.text((position_x, position_y), word, fill=1, font=font)
-
-    # Flipping the image
-    # img = img.transpose(Image.FLIP_TOP_BOTTOM)
-
     return np.array(img)
 
 
@@ -106,12 +102,15 @@ def calculate_and_plotE(
     xs, ys = np.meshgrid(x, y)
     E: NDArray[np.float64] = get_Efield(x, y, A0, dist, wavelength)
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-    ax1.axis("off")
-    ax1.imshow(E, cmap="hot")
+    ax2.axis("off")
+    ax2.imshow(E, cmap="hot")
+    ax1.set_ylabel("Intensity", fontsize=15)
     if slice_x:
-        ax2.plot(xs[slice_x], E[slice_x] ** 2)
+        ax1.plot(xs[slice_x], E[slice_x] ** 2)
+        ax1.set_xlabel("x", fontsize=15)
     elif slice_y:
-        ax2.plot(ys[slice_y], E[slice_y] ** 2)
+        ax1.plot(ys[slice_y], E[slice_y] ** 2)
+        ax1.set_xlabel("y", fontsize=15)
     plt.show()
 
 
@@ -138,7 +137,7 @@ def animate_with_distance(
         frames=len(distances),
         interval=20,
     )
-    ani.save("basic_animation.GIF", fps=27, writer="pillow", dpi=300)
+    ani.save("single_animation.GIF", fps=27, writer="pillow", dpi=300)
 
 
 def do_multiple_animations(
@@ -155,7 +154,6 @@ def do_multiple_animations(
     n_plots: int = len(Apertures)
     idx_list: int = list(range(1, n_plots + 1))
     fig = plt.figure(figsize=figsize)
-    # fig.set_tight_layout(True)
 
     def animate(i):
         print(i)
@@ -173,7 +171,7 @@ def do_multiple_animations(
         frames=len(distances),
         interval=20,
     )
-    ani.save("basic_animation.GIF", fps=30, writer="pillow", dpi=300)
+    ani.save("multiple_animations.GIF", fps=30, writer="pillow", dpi=300)
 
 
 # We write everything in units of 10⁻4 meters
@@ -182,7 +180,7 @@ dist: int = 300
 
 start: int = -20
 end: int = 20
-N: int = 1000
+N: int = 1500
 
 x: NDArray[np.float64] = np.linspace(start, end, N)
 y: NDArray[np.float64] = np.linspace(start, end, N)
@@ -270,16 +268,9 @@ Apertures = [
     A0_handicap,
 ]
 
-do_multiple_animations(Apertures, x, y, distances, wavelength, 3, 3)
+# This animation is too intensive to do in one go for Python
+# do_multiple_animations(Apertures, x, y, distances, wavelength, 3, 3)
+
 calculate_and_plotE(x, y, A0_slit, dist, wavelength, slice_x)
 calculate_and_plotE(x, y, A0_gauss, dist, wavelength, slice_y=slice_y)
-calculate_and_plotE(x, y, A0_grating, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_amogus, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_doubleslit, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_doubleO, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_hexagon, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_david, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_rub_har, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_rub_nak, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_optics, dist, wavelength, slice_x=slice_x)
-calculate_and_plotE(x, y, A0_handicap, dist, wavelength, slice_x=slice_x)
+calculate_and_plotE(x, y, A0_doubleslit, dist, wavelength, slice_x)
